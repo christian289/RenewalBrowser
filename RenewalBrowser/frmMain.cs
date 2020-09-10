@@ -26,7 +26,7 @@ namespace RenewalBrowser
             btnRenewalStart.Click += BtnRenewalStart_Click;
             btnRenewalStop.Click += BtnRenewalStop_Click;
 
-            txtWindowCaption.Text = "CRM Ver2.0 - Chrome"; // 기본값
+            txtWindowCaption.Text = "R&G CRM - Chrome"; // 기본값
             txtInterval.Text = "1"; // 기본값
 
             btnRenewalStop.Enabled = false;
@@ -89,12 +89,13 @@ namespace RenewalBrowser
 
         private async void TimerStart(string WindowName, int minute, CancellationToken token)
         {
-            IntPtr TgtHnd;
+            IntPtr TgtHnd = IntPtr.Zero;
             int interval = minute * 60 * 1000;
 
             while (!token.IsCancellationRequested)
             {
                 FindTargetWindow(WindowName, out TgtHnd);
+
                 if (!TgtHnd.Equals(null))
                 {
                     Utils.SetForegroundWindow(TgtHnd);
@@ -102,6 +103,7 @@ namespace RenewalBrowser
                     //Utils.keybd_event(Utils.VK_F5, 0, Utils.KEYEVENTF_EXTENDEDKEY | Utils.KEYEVENTF_KEYUP, 0);
                     log.Info("새로고침 완료");
                 }
+
                 await Task.Delay(interval, token).ContinueWith(tsk => { }); // ContinueWith 메서드로 인해 try-catch 없이 TaskCanceledException을 잡을 수 있다.
             }
         }
